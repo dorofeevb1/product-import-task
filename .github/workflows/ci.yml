@@ -4,27 +4,26 @@ on:
   push:
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          extensions: pdo_sqlite, mbstring, intl, fileinfo, zip
-          coverage: none
-      - run: cd backend && composer validate --strict
-      - run: cd backend && composer install --no-interaction --prefer-dist
-      - run: cd backend && vendor/bin/phpstan analyse --memory-limit=512M
-      - run: cd backend && vendor/bin/phpunit --testdox
-      - run: cd backend && vendor/bin/phpunit --filter "(ImportActionTest|ImportServiceTest|ProductListActionTest)"
+      - uses: actions/checkout@v5
+      - name: Build backend test image
+        run: docker build -f backend/Dockerfile --target test -t product-backend-test ./backend
+      - name: PHPStan
+        run: docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpstan analyse --memory-limit=512M
+      - name: PHPUnit
+        run: docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpunit --testdox
 
   frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
       - run: cd frontend && npm ci
