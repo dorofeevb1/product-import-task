@@ -1,0 +1,84 @@
+services:
+  app:
+    build:
+      context: ./backend
+      target: runtime
+    container_name: product_app
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/var/www:z
+    depends_on:
+      - db
+      - rabbitmq
+
+  worker:
+    build:
+      context: ./backend
+      target: runtime
+    container_name: product_worker
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    command: ["php", "bin/consume-imports.php"]
+    volumes:
+      - ./backend:/var/www:z
+    depends_on:
+      - db
+      - rabbitmq
+
+  app_nginx:
+    image: nginx:1.27-alpine
+    container_name: product_app_nginx
+    restart: unless-stopped
+    volumes:
+      - ./backend:/var/www:z
+      - ./backend/nginx.conf:/etc/nginx/conf.d/default.conf:ro,z
+    depends_on:
+      - app
+
+  db:
+    image: postgres:16-alpine
+    container_name: product_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: product_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: product_frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - app_nginx
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: product_nginx
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro,z
+    depends_on:
+      - app_nginx
+
+volumes:
+  pg_data:

@@ -1,0 +1,31 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Environment and local overrides
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Dependencies
+backend/vendor/
+frontend/node_modules/
+
+# Frontend build/test artifacts
+frontend/dist/
+frontend/coverage/
+frontend/.angular/
+
+# Backend runtime artifacts
+backend/var/
+backend/storage/images/
+backend/storage/imports/
+backend/.phpunit.result.cache
+
+# Logs and temp files
+*.log
+*.pid
+tmp/
+.tmp/

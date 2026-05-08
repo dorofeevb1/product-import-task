@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_sqlite, mbstring, intl, fileinfo, zip
+          coverage: none
+      - run: cd backend && composer validate --strict
+      - run: cd backend && composer install --no-interaction --prefer-dist
+      - run: cd backend && vendor/bin/phpstan analyse --memory-limit=512M
+      - run: cd backend && vendor/bin/phpunit --testdox
+      - run: cd backend && vendor/bin/phpunit --filter "(ImportActionTest|ImportServiceTest|ProductListActionTest)"
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cd frontend && npm ci
+      - run: cd frontend && npm test -- --watch=false --no-progress
+      - run: cd frontend && npm run build
