@@ -15,9 +15,9 @@ jobs:
       - name: Build backend test image
         run: docker build -f backend/Dockerfile --target test -t product-backend-test ./backend
       - name: PHPStan
-        run: docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpstan analyse --memory-limit=512M
+        run: 'docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpstan analyse --memory-limit=512M'
       - name: PHPUnit
-        run: docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpunit --testdox
+        run: 'docker run --rm -e DB_DRIVER=pdo_sqlite -e DB_PATH=:memory: product-backend-test vendor/bin/phpunit --testdox'
 
   frontend:
     runs-on: ubuntu-latest
