@@ -4,7 +4,7 @@
   --surface-soft: #1a253f;
   --border: rgba(167, 188, 255, 0.2);
   --text: #f1f5ff;
-  --muted: #9ca9c6;
+  --muted: #b8c7e6;
   --primary: #5f7cff;
   --primary-hover: #7490ff;
   --success: #3ddc97;
@@ -320,9 +320,10 @@ a:focus-visible,
 
 .list-item {
   border-radius: var(--radius-md);
-  border: 1px solid rgba(167, 188, 255, 0.2);
-  background: rgba(18, 30, 55, 0.6);
+  border: 1px solid rgba(167,188,255,.2);
+  background: #121e3799;
   padding: 12px 14px;
+  color: #fff;
 }
 
 .image-grid {
@@ -421,6 +422,19 @@ a:focus-visible,
   --bs-table-striped-bg: rgba(18, 30, 55, 0.75);
   --bs-table-hover-bg: rgba(28, 46, 82, 0.9);
   --bs-table-border-color: rgba(167, 188, 255, 0.18);
+  --bs-table-color: #edf3ff;
+  --bs-table-striped-color: #edf3ff;
+  --bs-table-hover-color: #ffffff;
+}
+
+.table.table-dark th {
+  color: #f5f8ff;
+}
+
+.table.table-dark td.muted,
+.image-card .muted,
+h4.muted {
+  color: #d7e4ff !important;
 }
 
 @media (max-width: 900px) {
